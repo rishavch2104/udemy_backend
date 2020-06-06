@@ -1,12 +1,19 @@
-const express = require("express");
-const cartController = require("./../controller/cartController");
-const asyncHandler = require("./../services/asyncHandler");
+const express = require('express');
+const cartController = require('./../controller/cartController');
+const asyncHandler = require('./../services/asyncHandler');
+const firebaseConnect = require('./../middleware/firebaseConnect');
 const router = express.Router();
 
 router
-  .route("/")
-  .get(asyncHandler(cartController.getCart))
-  .patch(asyncHandler(cartController.addCourseToCart))
-  .delete(asyncHandler(cartController.deleteCourseFromCart));
+  .route('/')
+  .get(firebaseConnect.checkAuth, asyncHandler(cartController.getCart))
+  .patch(
+    firebaseConnect.checkAuth,
+    asyncHandler(cartController.addCourseToCart)
+  )
+  .delete(
+    firebaseConnect.checkAuth,
+    asyncHandler(cartController.deleteCourseFromCart)
+  );
 
 module.exports = router;

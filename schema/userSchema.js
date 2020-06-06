@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
@@ -6,6 +6,7 @@ const UserSchema = new Schema({
   displayName: { type: String, required: false },
   headLine: { type: String },
   userId: { type: String, required: true },
+  isAdmin: { type: Boolean, default: false },
   biography: {
     text: { type: String },
     options: {
@@ -32,7 +33,7 @@ const UserSchema = new Schema({
     courses: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Courses",
+        ref: 'Courses',
       },
     ],
     courseStatus: [
@@ -46,13 +47,13 @@ const UserSchema = new Schema({
     cart: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Courses",
+        ref: 'Courses',
       },
     ],
     wishList: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Courses",
+        ref: 'Courses',
       },
     ],
   },
@@ -61,6 +62,6 @@ const UserSchema = new Schema({
   },
 });
 
-const Users = mongoose.model("Users", UserSchema);
+const Users = mongoose.model('Users', UserSchema);
 
 module.exports = Users;
