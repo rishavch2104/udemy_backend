@@ -1,7 +1,7 @@
-const Courses = require("./../schema/courseSchema");
+const Courses = require('./../schema/courseSchema');
 
 module.exports = {
-  getCourse: () => {
+  getCourse: (config) => {
     return Courses.find();
   },
   getCourseById: (id) => {
@@ -12,19 +12,23 @@ module.exports = {
     return await newCourse.save();
   },
   updateCourse: (updatedFields, id) => {
-    return Courses.findByIdAndUpdate(id, updatedFields, { new: true });
+    return Courses.findByIdAndUpdate(id, updatedFields, {
+      new: true,
+      runValidators: true,
+    });
   },
   addLectureToCourse: (lecture, id) => {
+    console.log(lecture);
     return Courses.findByIdAndUpdate(
       id,
-      { $addToSet: { lectures: lecture } },
-      { new: true }
+      { $addToSet: { lectures: lecture.lecture } },
+      { new: true, runValidators: true }
     );
   },
   deleteLectureFromCourse: (lecture, id) => {
     return Courses.findByIdAndUpdate(
       id,
-      { $pull: { lectures: lecture } },
+      { $pull: { lectures: lecture.lecture } },
       { new: true }
     );
   },

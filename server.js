@@ -1,6 +1,7 @@
+//ERROR HANDLING FOR UNCAUGHT EXCEPTION
 process.on('uncaughtException', (err) => {
   console.log(err.name, err.message);
-
+  err.printStackTrace && err.printStackTrace();
   process.exit(1);
 });
 
@@ -28,8 +29,10 @@ const server = app.listen(process.env.PORT, () => {
   console.log(`connected on port ${process.env.PORT}`);
 });
 
+//ERROR HANDLING FOR UNHANDLED REJECTION
 process.on('unhandledRejection', (err) => {
   console.log(err.name, err.message);
+  err.printStackTrace && err.printStackTrace();
   server.close(() => {
     process.exit(1);
   });

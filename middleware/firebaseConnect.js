@@ -1,15 +1,20 @@
 const { admin } = require('./firebaseAdmin');
 const AppError = require('./../errorHandling/appError');
 const asyncHandler = require('./../services/asyncHandler');
+const userService = require('./../services/userService');
 const checkAuth = asyncHandler(async (req, res, next) => {
   if (req.headers.authorization) {
     return admin
       .auth()
       .verifyIdToken(req.headers.authorization)
       .then((user) => {
-        res.locals.userId = user.user_id;
-        UserService.getUser(user.user_id).then((userDB) => (req.user = userDB));
-
+        res.locals.firebaseId = user.user_id;
+        return userService.findUserWithFirebaseId(user.uid, '_id');
+      })
+      .then((uid) => {
+        if (uid) {
+          res.locals.userId = uid._id;
+        }
         next();
       });
   } else {

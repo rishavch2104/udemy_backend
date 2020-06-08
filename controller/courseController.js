@@ -1,6 +1,6 @@
-const courseService = require("./../services/courseService");
-const APIUtilities = require("./../services/apiUtilities");
-const AppError = require("./../errorHandling/appError");
+const courseService = require('./../services/courseService');
+const APIUtilities = require('./../services/apiUtilities');
+const AppError = require('./../errorHandling/appError');
 module.exports = {
   getCourse: async (req, res, next) => {
     const features = new APIUtilities(courseService.getCourse(), req.query)
@@ -10,7 +10,7 @@ module.exports = {
       .fields();
     const courses = await features.query;
     if (!courses) {
-      return next(new AppError("Course Not Found", 404));
+      return next(new AppError('Course Not Found', 404));
     }
     return res.status(200).json(courses);
   },
@@ -18,7 +18,7 @@ module.exports = {
     const id = req.params.id;
     return courseService.getCourseById(id).then((course) => {
       if (!course) {
-        return next(new AppError("Course Not Found", 404));
+        return next(new AppError('Course Not Found', 404));
       }
       return res.status(200).json(course);
     });
@@ -27,7 +27,7 @@ module.exports = {
     const courseDetails = req.body;
     courseDetails.userId = res.locals.userId;
     return courseService.addCourse(courseDetails).then(() => {
-      return res.status(200).json("Course Added");
+      return res.status(200).json('Course Added');
     });
   },
   updateCourse: (req, res) => {
@@ -37,35 +37,34 @@ module.exports = {
       .updateCourse(updatedFields, id)
       .then((updatedCourse) => {
         if (!updatedCourse) {
-          return next(new AppError("Course Not Found", 404));
+          return next(new AppError('Course Not Found', 404));
         }
         return res.status(200).json(updatedCourse);
       });
   },
   addLectureToCourse: (req, res) => {
-    console.log("in add Lecture");
     const lecture = req.body;
     const id = req.params.id;
     return courseService
       .addLectureToCourse(lecture, id)
       .then((updatedCourse) => {
         if (!updatedCourse) {
-          return next(new AppError("Course Not Found", 404));
+          return next(new AppError('Course Not Found', 404));
         }
         return res.status(200).json(updatedCourse);
       });
   },
   deleteLectureFromCourse: (req, res) => {
-    console.log("in delete lecture");
+    console.log('in delete lecture');
     const id = req.params.id;
     const lecture = req.body;
     return courseService
       .deleteLectureFromCourse(lecture, id)
       .then((course) => {
         if (!course) {
-          return next(new AppError("Course Not Found", 404));
+          return next(new AppError('Course Not Found', 404));
         }
-        return res.status(200).json("Lecture Deleted");
+        return res.status(200).json('Lecture Deleted');
       })
       .catch(console.error);
   },

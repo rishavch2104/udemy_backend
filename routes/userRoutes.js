@@ -11,4 +11,11 @@ router
   .get(firebaseConnect.checkAuth, asyncHandler(userController.getUser))
   .patch(firebaseConnect.checkAuth, asyncHandler(userController.updateUser));
 
+router
+  .route('/courseprogress')
+  .patch(
+    firebaseConnect.checkAuth,
+    asyncHandler(userController.updateCourseProgress)
+  );
+
 module.exports = router;

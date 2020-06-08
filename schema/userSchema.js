@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   displayName: { type: String, required: false },
   headLine: { type: String },
-  userId: { type: String, required: true },
-  isAdmin: { type: Boolean, default: false },
+  firebaseId: { type: String, required: true, unique: true },
+  isTeacher: { type: Boolean, default: false },
   biography: {
     text: { type: String },
     options: {
@@ -25,10 +25,7 @@ const UserSchema = new Schema({
   paymentOptions: {
     type: [String],
   },
-  isTeacher: {
-    type: Boolean,
-    default: false,
-  },
+
   studentOptions: {
     courses: [
       {
@@ -36,7 +33,7 @@ const UserSchema = new Schema({
         ref: 'Courses',
       },
     ],
-    courseStatus: [
+    courseProgress: [
       {
         courseId: String,
         videosTicked: [Boolean],
@@ -47,13 +44,13 @@ const UserSchema = new Schema({
     cart: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Courses',
+        ref: 'courses',
       },
     ],
     wishList: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Courses',
+        ref: 'courses',
       },
     ],
   },

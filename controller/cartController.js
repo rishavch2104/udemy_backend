@@ -1,27 +1,31 @@
-const userService = require("./../services/userService");
-const APIUtilities = require("./../services/apiUtilities");
+const userService = require('./../services/userService');
+const APIUtilities = require('./../services/apiUtilities');
 
 module.exports = {
   getCart: (req, res, next) => {
-    const userId = res.locals.userId;
-    const queryObject = { fields: "cart" };
-    return new APIUtilities(userService.getUser(userId), queryObject)
+    const firebaseId = res.locals.firebaseId;
+    const queryObject = { fields: 'studentOptions' };
+    const config = { populate: ['courses'] };
+    return new APIUtilities(
+      userService.getUser(firebaseId, config),
+      queryObject
+    )
       .fields()
-      .query.then((cart) => {
-        return res.status(200).json(cart);
+      .query.then((studentOptions) => {
+        return res.status(200).json(studentOptions[0].studentOptions.cart);
       });
   },
   addCourseToCart: (req, res, next) => {
-    const userId = res.locals.userId;
+    const firebaseId = res.locals.firebaseId;
     const course = req.body.course;
-    return userService.addCourseToCart(userId, course).then((user) => {
+    return userService.addCourseToCart(firebaseId, course).then((user) => {
       return res.status(200).json(user);
     });
   },
   deleteCourseFromCart: (req, res, next) => {
-    const userId = res.locals.userId;
+    const firebaseId = res.locals.firebaseId;
     const course = req.body.course;
-    return userService.deleteCourseFromCart(userId, course).then((cart) => {
+    return userService.deleteCourseFromCart(firebaseId, course).then((cart) => {
       return res.status(200).json(cart);
     });
   },

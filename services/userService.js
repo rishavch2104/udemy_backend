@@ -1,39 +1,64 @@
-const Users = require("./../schema/userSchema");
+const Users = require('./../schema/userSchema');
 
 module.exports = {
   addUser: async (userDetails) => {
     const newUser = new Users(userDetails);
     return await newUser.save();
   },
-  getUser: (userId) => {
-    return Users.find({ userId: userId });
+  findUserWithFirebaseId: (firebaseId, projection) => {
+    return Users.findOne({ firebaseId: firebaseId }).select(projection);
   },
-  updateUser: (fields, userId) => {
-    return Users.findOneAndUpdate({ userId: userId }, fields, { new: true });
+  getUser: (userId, config = {}) => {
+    const { populate = [] } = config;
+    const query = Users.find({ firebaseId: userId });
+    if (populate) {
+      console.log(populate, 'in populate');
+      populate.forEach((field) => {
+        query.populate(field);
+      });
+    }
+    return query;
   },
-  addCourseToCart: (userId, course) => {
+  updateUser: (fields, firebaseId) => {
+    return Users.findOneAndUpdate({ firebaseId: firebaseId }, fields, {
+      new: true,
+      runValidators: true,
+    });
+  },
+  addCourseToCart: (firebaseId, course) => {
     return Users.findOneAndUpdate(
-      { userId: userId },
-      { $addToSet: { "studentOptions.cart": course } },
+      { firebaseId: firebaseId },
+      { $addToSet: { 'studentOptions.cart': course } },
+      { new: true, runValidators: true }
+    );
+  },
+  deleteCourseFromCart: (firebaseId, course) => {
+    return Users.findOneAndUpdate(
+      { firebaseId: firebaseId },
+      { $pull: { 'studentOptions.cart': course } },
       { new: true }
     );
   },
-  deleteCourseFromCart: (userId, course) => {
+  addCourseToWishList: (firebaseId, course) => {
     return Users.findOneAndUpdate(
-      { userId: userId },
-      { $pull: { "studentOptions.cart": course } }
+      { firebaseId: firebaseId },
+      { $addToSet: { 'studentOptions.wishList': course } }
     );
   },
-  addCourseToWishList: (userId, course) => {
+  deleteCourseFromWishList: (firebaseId, course) => {
     return Users.findOneAndUpdate(
-      { userId: userId },
-      { $addToSet: { "studentOptions.wishList": course } }
+      { firebaseId: firebaseId },
+      { $pull: { 'studentOptions.wishList': course } }
     );
   },
-  deleteCourseFromWishList: (userId, course) => {
+
+  updateCourseProgress: (firebaseId, courseProgress) => {
     return Users.findOneAndUpdate(
-      { userId: userId },
-      { $pull: { "studentOptions.wishList": course } }
+      {
+        firebaseId: firebaseId,
+        'studentOptions.courseProgress.$.courseId': courseProgress.courseId,
+      },
+      { $set: { 'studentOptions.courseProgress': courseProgress } }
     );
   },
 };
